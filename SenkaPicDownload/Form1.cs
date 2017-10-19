@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Neetsonic.Tool;
 
@@ -48,23 +49,23 @@ namespace SenkaPicDownload
             const int ServerCount = 20;
             DateTime currDate = new DateTime(dateStart.Value.Year, dateStart.Value.Month, 1);
             DateTime endDate = new DateTime(dateEnd.Value.Year, dateEnd.Value.Month, 1);
-            WebClient myWebClient = new WebClient();
-            while(currDate <= endDate)
-            {
-                int serverNO = Convert.ToInt32(cmbServer.SelectedValue);
-                //for(int serverNO = 1; serverNO <= ServerCount; serverNO++)
-                //{
+            int serverNO = Convert.ToInt32(cmbServer.SelectedValue);
+            string serverName = cmbServer.Text;
+            string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), @"战果人事表", serverName);
+            Task.Factory.StartNew(() => {
+                WebClient myWebClient = new WebClient();
+                while(currDate <= endDate)
+                {
+                    if(!Directory.Exists(dir)) Directory.CreateDirectory(dir);
                     string filename = string.Format($@"{currDate.Year}{currDate.Month:00}{serverNO:00}.jpg").Substring(2);
                     string url = string.Concat(Url, filename);
-                    string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), @"战果人事表");
-                    if(!Directory.Exists(dir)) Directory.CreateDirectory(dir);
                     string filePath = Path.Combine(dir, filename);
-                    try { myWebClient.DownloadFile(url, filePath); }
+                    try
+                    {  myWebClient.DownloadFile(url, filePath); }
                     catch { }
-                //}
-                currDate = currDate.AddMonths(1);
-            }
-            MessageBoxEx.Info(@"完成！");
+                    currDate = currDate.AddMonths(1);
+                }
+            });
         }
     }
 }
