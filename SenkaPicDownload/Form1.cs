@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Neetsonic.Tool;
 
 namespace SenkaPicDownload
 {
@@ -46,13 +44,13 @@ namespace SenkaPicDownload
         private void BtnDownload_Click(object sender, EventArgs e)
         {
             const string Url = "http://203.104.209.7/kcscontents/information/image/rank";
-            const int ServerCount = 20;
             DateTime currDate = new DateTime(dateStart.Value.Year, dateStart.Value.Month, 1);
             DateTime endDate = new DateTime(dateEnd.Value.Year, dateEnd.Value.Month, 1);
             int serverNO = Convert.ToInt32(cmbServer.SelectedValue);
             string serverName = cmbServer.Text;
             string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), @"战果人事表", serverName);
-            Task.Factory.StartNew(() => {
+            Task.Factory.StartNew(() =>
+            {
                 WebClient myWebClient = new WebClient();
                 while(currDate <= endDate)
                 {
@@ -61,7 +59,9 @@ namespace SenkaPicDownload
                     string url = string.Concat(Url, filename);
                     string filePath = Path.Combine(dir, filename);
                     try
-                    {  myWebClient.DownloadFile(url, filePath); }
+                    {
+                        myWebClient.DownloadFile(url, filePath);
+                    }
                     catch { }
                     currDate = currDate.AddMonths(1);
                 }
